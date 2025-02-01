@@ -1,114 +1,167 @@
-# Next.js Multi-Tenant Architecture with Supabase
+# Next.js Multi-Tenant SaaS Starter with Supabase
 
-This repository provides a production-ready template and comprehensive guide for building multi-tenant applications using Next.js and Supabase. It implements secure tenant isolation, efficient database management, and scalable authentication patterns.
+A production-ready starter template for building multi-tenant SaaS applications using Next.js 14, Supabase, and Tailwind CSS. Features secure tenant isolation, real-time capabilities, and scalable architecture.
 
-## Core Features
+## Features
 
-- Row Level Security (RLS) for tenant data isolation
-- Custom middleware for tenant resolution
-- Optimized database schema design for multi-tenancy
-- Type-safe database operations with generated types
-- Real-time subscriptions with tenant isolation
-- Automatic tenant routing and subdomain handling
-- Role-based access control (RBAC) within tenants
+- ✨ Modern Stack: Next.js 14, Supabase, TypeScript, Tailwind CSS
+- 🔐 Secure tenant isolation at database and application levels
+- 🌍 Subdomain-based multi-tenancy
+- ⚡️ Real-time updates with tenant-aware subscriptions
+- 🎨 Beautiful UI with Tailwind and shadcn/ui components
+- 🚀 Edge-ready with Next.js middleware
+- 📱 Responsive and mobile-friendly
+- 🔒 Row Level Security (RLS) policies for data protection
+- 👥 Team collaboration features
+- 📊 Dashboard analytics (coming soon)
 
-## Architecture Overview
+## Quick Start
 
-### Tenant Isolation Strategies
-
-We implement a hybrid approach to tenant isolation:
-
-1. **Database Level**: Using Supabase RLS policies and schema isolation
-2. **Application Level**: Middleware-based tenant context resolution
-3. **API Level**: Automatic tenant context injection in API routes
-
-### Database Schema
-
-The database follows a schema-per-tenant approach with shared tables:
-
-```sql
--- Shared schemas
-create schema shared;
-
--- Tenant-specific schema template
-create schema tenant_template;
-
--- Core tables
-create table shared.tenants (
-  id uuid primary key default uuid_generate_v4(),
-  name text not null,
-  slug text not null unique,
-  created_at timestamp with time zone default now(),
-  updated_at timestamp with time zone default now()
-);
-
-create table shared.users (
-  id uuid primary key default uuid_generate_v4(),
-  email text not null unique,
-  created_at timestamp with time zone default now(),
-  updated_at timestamp with time zone default now()
-);
-
-create table shared.tenant_users (
-  tenant_id uuid references shared.tenants(id) on delete cascade,
-  user_id uuid references shared.users(id) on delete cascade,
-  role text not null,
-  created_at timestamp with time zone default now(),
-  primary key (tenant_id, user_id)
-);
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/nextjs-supabase-multitenant.git
+cd nextjs-supabase-multitenant
 ```
 
-## Getting Started
+2. Install dependencies:
+```bash
+pnpm install
+```
 
-1. Clone this repository
-2. Install dependencies: `pnpm install`
-3. Copy `.env.example` to `.env.local` and fill in your Supabase credentials
-4. Run database migrations: `pnpm db:migrate`
-5. Start the development server: `pnpm dev`
+3. Set up Supabase:
+- Create a new project at [supabase.com](https://supabase.com)
+- Copy your project URL and anon key
+- Set up your database by running the migrations:
+  ```bash
+  pnpm supabase migration up
+  ```
 
-## Development Workflow
+4. Configure environment variables:
+```bash
+cp .env.example .env.local
+```
+Edit `.env.local` with your Supabase credentials and other settings.
+
+5. Start the development server:
+```bash
+pnpm dev
+```
+
+## Project Structure
+
+```
+├── src/
+│   ├── app/                    # Next.js 14 app directory
+│   │   ├── _sites/            # Tenant-specific routes
+│   │   ├── api/               # API routes
+│   │   └── auth/              # Authentication pages
+│   ├── components/            # React components
+│   │   ├── projects/         # Project-related components
+│   │   └── providers/        # Context providers
+│   ├── hooks/                # Custom React hooks
+│   ├── lib/                  # Utility functions
+│   ├── styles/               # Global styles
+│   └── types/                # TypeScript type definitions
+├── supabase/
+│   └── migrations/           # Database migrations
+├── public/                   # Static assets
+└── docs/                     # Documentation
+```
+
+## Key Features Explained
+
+### Tenant Isolation
+
+We use a combination of techniques to ensure complete tenant isolation:
+
+1. **Database Level**:
+   - Separate schema per tenant
+   - Row Level Security (RLS) policies
+   - Tenant context in JWT claims
+
+2. **Application Level**:
+   - Middleware for tenant resolution
+   - Context providers for tenant state
+   - Automatic tenant injection in queries
+
+### Real-time Features
+
+Tenant-aware real-time subscriptions are implemented using Supabase's real-time features:
+
+```typescript
+const subscription = supabase
+  .channel('table_db_changes')
+  .on(
+    'postgres_changes',
+    { event: '*', schema: `tenant_${tenantId}` },
+    (payload) => {
+      // Handle changes
+    }
+  )
+  .subscribe()
+```
+
+### Authentication Flow
+
+1. User signs up/logs in through Supabase Auth
+2. System checks tenant membership
+3. Middleware validates tenant access
+4. RLS policies enforce data access
+
+## Development
 
 ### Database Migrations
 
-We use `supabase-cli` for database migrations:
-
+Create a new migration:
 ```bash
-# Create a new migration
-pnpm db:migration:new
+pnpm db:migration:new your_migration_name
+```
 
-# Run migrations
+Apply migrations:
+```bash
 pnpm db:migrate
-
-# Generate types
-pnpm db:types
 ```
 
 ### Adding New Features
 
-1. Create feature branch: `git checkout -b feature/your-feature`
+1. Create feature branch:
+```bash
+git checkout -b feature/your-feature
+```
+
 2. Implement changes following our architectural patterns
-3. Add tests for new functionality
-4. Submit PR for review
+3. Add tests
+4. Submit PR
 
-## Security Best Practices
+## Deployment
 
-- All database access is controlled through RLS policies
-- JWT tokens include tenant context for additional security
-- Regular security audits and updates
-- Comprehensive input validation and sanitization
-- Rate limiting and abuse prevention
+### Vercel Deployment
 
-## Performance Optimization
+1. Push your code to GitHub
+2. Import project in Vercel
+3. Configure environment variables
+4. Configure custom domains for your tenants
 
-- Efficient database indexing strategies
-- Caching with Redis (optional)
-- Edge function deployment for global scalability
-- Optimized real-time subscriptions
+### Custom Domain Setup
+
+1. Add wildcard DNS record:
+```
+*.yourdomain.com -> CNAME to your-vercel-project.vercel.app
+```
+
+2. Configure domains in Vercel
+3. Update `NEXT_PUBLIC_ROOT_DOMAIN` in your environment variables
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+Please read our [Contributing Guide](CONTRIBUTING.md) before submitting PRs.
 
 ## License
 
 MIT
+
+## Support
+
+- [Documentation](docs/ARCHITECTURE.md)
+- [Issue Tracker](https://github.com/yourusername/nextjs-supabase-multitenant/issues)
+- [Discussions](https://github.com/yourusername/nextjs-supabase-multitenant/discussions)
