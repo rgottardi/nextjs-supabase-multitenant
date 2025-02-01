@@ -1,0 +1,178 @@
+# Project Context
+This is a multi-tenant application built with Next.js 14 and Supabase that must comply with 21 CFR Part 11, ISO 9001, and ISO 13485 standards. The application handles medical device software requirements and includes comprehensive audit logging, electronic signatures, and strict data isolation.
+
+# Technology Stack
+- Next.js 14 App Router
+- TypeScript (strict mode)
+- Supabase for database, auth, and real-time
+- Tailwind CSS
+- shadcn/ui components
+- Zod for validation
+- React Query for data fetching
+
+# Compliance Requirements
+- Implement comprehensive audit logging for all data changes
+- Include electronic signatures for critical operations
+- Maintain data integrity and isolation between tenants
+- Follow RBAC (Role-Based Access Control) principles
+- Handle MFA (Multi-Factor Authentication)
+- Implement validation testing protocols
+
+# Coding Standards
+
+## TypeScript
+- Use strict TypeScript with explicit types
+- Prefer interfaces over types for objects
+- Use Zod schemas for runtime validation
+- Maintain proper type imports/exports
+- No any types unless absolutely necessary
+- Use proper error handling with typed errors
+
+## React/Next.js
+- Use Server Components by default
+- Add 'use client' only when necessary
+- Implement proper error boundaries
+- Follow React Query best practices
+- Use proper suspense boundaries
+- Implement proper loading states
+- Handle all edge cases
+
+## Database
+- Always use RLS policies
+- Include audit logging triggers
+- Maintain tenant isolation
+- Use proper indexing
+- Handle data validation
+- Implement proper error handling
+
+## Authentication
+- Implement proper session management
+- Handle MFA requirements
+- Include proper token validation
+- Implement proper password policies
+- Handle session timeouts
+- Log all authentication events
+
+## Components
+- Follow atomic design principles
+- Implement proper prop validation
+- Include proper error handling
+- Add proper accessibility
+- Include proper documentation
+- Follow component composition patterns
+
+## Testing
+- Include unit tests for all components
+- Implement integration tests
+- Add end-to-end tests
+- Follow TDD principles
+- Include proper test documentation
+- Test all edge cases
+
+# Code Generation Rules
+
+## Component Creation
+- Include proper type definitions
+- Add proper error handling
+- Include loading states
+- Add proper documentation
+- Follow accessibility guidelines
+- Include proper validation
+
+## API Routes
+- Implement proper validation
+- Include error handling
+- Add proper authentication
+- Include proper logging
+- Follow RESTful principles
+- Handle rate limiting
+
+## Database Operations
+- Include proper RLS policies
+- Add audit logging
+- Implement proper validation
+- Handle errors gracefully
+- Maintain data integrity
+- Follow security best practices
+
+## Authentication Logic
+- Include proper validation
+- Handle MFA requirements
+- Implement proper logging
+- Follow security best practices
+- Handle edge cases
+- Maintain compliance requirements
+
+# Style Guidelines
+
+## File Structure
+```typescript
+// Imports
+import { type FC } from 'react'
+import { z } from 'zod'
+
+// Types
+interface Props {
+  // Props definition
+}
+
+// Validation
+const schema = z.object({
+  // Schema definition
+})
+
+// Component
+export const Component: FC<Props> = ({ prop }) => {
+  // Component logic
+}
+```
+
+## Error Handling
+```typescript
+try {
+  // Operation
+} catch (error) {
+  // Log error
+  logger.error('Operation failed', { error, context })
+  // Handle error appropriately
+  throw new AppError('Operation failed', { cause: error })
+}
+```
+
+## Database Queries
+```typescript
+const { data, error } = await supabase
+  .from('table')
+  .select('*')
+  .eq('tenant_id', tenantId)
+  .single()
+
+if (error) {
+  logger.error('Database query failed', { error })
+  throw new DatabaseError(error.message)
+}
+```
+
+# Documentation Requirements
+- Include JSDoc comments
+- Add proper type definitions
+- Document compliance aspects
+- Include validation requirements
+- Add security considerations
+- Document test cases
+
+# Security Requirements
+- Implement proper authentication
+- Add proper authorization
+- Include data validation
+- Implement audit logging
+- Follow security best practices
+- Maintain compliance requirements
+
+# Performance Guidelines
+- Implement proper caching
+- Use proper indexing
+- Optimize database queries
+- Handle proper loading states
+- Implement proper error boundaries
+- Follow performance best practices
